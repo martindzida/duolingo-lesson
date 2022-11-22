@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import WordTile from './WordTile';
 
-type wordObj = { id: number; word: string };
+export type wordObj = { id: number; word: string };
 
 function App() {
   const senteces: string[] = [
@@ -12,6 +13,7 @@ function App() {
 
   const [curSenId, setCurSenId] = useState(0);
   const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [words, setWords] = useState<wordObj[]>(shuffleArray(parseSentence(senteces[curSenId])));
   const [picked, setPicked] = useState<wordObj[]>([]);
 
@@ -40,10 +42,13 @@ function App() {
     const convStr = words.map((w: wordObj) => w.word).join(' ');
     const valid = convStr === senteces[curSenId];
     setIsValid(valid);
+    //TODO: think of the end of the lesson
     if (valid) {
-      setCurSenId(prev => prev + 1);
+      if (curSenId < senteces.length - 1) setCurSenId(prev => prev + 1);
+      else setIsCompleted(true);
+
+      setPicked([]);
     }
-    setPicked([]);
   };
 
   const handleTileClick = (tile: wordObj) => {
@@ -54,12 +59,14 @@ function App() {
     }
   };
 
+  const progress = Math.floor((curSenId / senteces.length) * 100);
+
   return (
     <div className='w-screen h-screen bg-amber-400 flex flex-col items-center justify-center gap-16 p-32'>
+      <div className='relative bg-slate-200 w-1/2 h-4 rounded-full'>
+        <div className='absolute bg-lime-300 h-4 rounded-full' style={{ width: `${progress}%` }}></div>
+      </div>
       <div className='flex flex-col items-center gap-16 p-24'>
-        <div className='relative'>
-          <div className='absolute'></div>
-        </div>
         <div className='w-full border-b-2 border-slate-800 p-2'>
           <div className='flex gap-8'>
             {picked.map((w: wordObj) => (
@@ -71,14 +78,7 @@ function App() {
         </div>
         <div className='flex gap-8'>
           {words.map((w: wordObj) => (
-            <button
-              key={w.id}
-              disabled={picked.includes(w)}
-              onClick={() => handleTileClick(w)}
-              className={`bg-white rounded-lg ${picked.includes(w) ? 'cursor-not-allowed' : 'cursor-pointer'} px-5 py-3`}
-            >
-              {w.word}
-            </button>
+            <WordTile key={w.id} word={w} isPicked={picked.includes(w)} handleTileClick={handleTileClick} />
           ))}
         </div>
         <button
@@ -90,6 +90,7 @@ function App() {
         <div>
           {isValid !== null && isValid && 'Correct'}
           {isValid !== null && !isValid && 'Try again'}
+          {isCompleted && 'Congratulations!'}
         </div>
       </div>
     </div>
