@@ -12,7 +12,7 @@ const WordTile = ({ word, isPicked, handleTileClick }: Props) => {
     <button
       disabled={isPicked}
       onClick={() => handleTileClick(word)}
-      className={`bg-white rounded-lg ${isPicked ? 'cursor-not-allowed' : 'cursor-pointer'} px-5 py-3`}
+      className={`bg-slate-100 shadow-md rounded-lg ${isPicked ? 'cursor-not-allowed' : 'cursor-pointer'} px-5 py-3`}
     >
       {word.word}
     </button>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import WordTile from './WordTile';
-import LessonHeader from './LessonHeader';
+import LessonHeader from './components/LessonHeader';
 
 export type wordObj = { id: number; word: string };
 
@@ -63,10 +63,10 @@ function App() {
   const getProgress = () => Math.floor((curSenId / senteces.length) * 100);
 
   return (
-    <div className='w-screen h-screen bg-amber-400 flex flex-col items-center justify-center gap-16 p-32'>
+    <div className='w-screen h-screen  flex flex-col items-center justify-center gap-16 p-32'>
       <LessonHeader />
       <div className='flex flex-col items-center gap-16 p-24'>
-        <div className='w-full border-b-2 border-slate-800 p-2'>
+        <div className='w-full border-b-2 border-slate-500 p-2'>
           <div className='flex gap-8'>
             {picked.map((w: wordObj) => (
               <button key={w.id} onClick={() => handleTileClick(w)} className='bg-white rounded-lg cursor-pointer px-5 py-3'>
