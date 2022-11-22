@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import WordTile from './WordTile';
+import LessonHeader from './LessonHeader';
 
 export type wordObj = { id: number; word: string };
 
@@ -59,13 +60,11 @@ function App() {
     }
   };
 
-  const progress = Math.floor((curSenId / senteces.length) * 100);
+  const getProgress = () => Math.floor((curSenId / senteces.length) * 100);
 
   return (
     <div className='w-screen h-screen bg-amber-400 flex flex-col items-center justify-center gap-16 p-32'>
-      <div className='relative bg-slate-200 w-1/2 h-4 rounded-full'>
-        <div className='absolute bg-lime-300 h-4 rounded-full' style={{ width: `${progress}%` }}></div>
-      </div>
+      <LessonHeader />
       <div className='flex flex-col items-center gap-16 p-24'>
         <div className='w-full border-b-2 border-slate-800 p-2'>
           <div className='flex gap-8'>
