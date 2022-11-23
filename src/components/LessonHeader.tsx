@@ -1,7 +1,12 @@
 import LeaveLessonBtn from './LeaveLessonBtn';
 import ProgressBar from './ProgressBar';
 
-const LessonHeader = () => {
+interface Props {
+  progress: number;
+  handleLeaveLesson: () => void;
+}
+
+const LessonHeader = ({}: Props) => {
   return (
     <div className='flex justify-center items-center w-full gap-8'>
       <LeaveLessonBtn />
