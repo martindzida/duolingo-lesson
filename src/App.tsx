@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import WordTile from './WordTile';
+import WordTile from './components/WordTile';
 import LessonHeader from './components/LessonHeader';
+import RetryLessonBtn from './components/RetryLessonBtn';
+import CheckBtn from './components/CheckBtn';
+import CheckResponse from './components/CheckResponse';
 
 export type wordObj = { id: number; word: string };
 
@@ -63,34 +66,33 @@ function App() {
   const getProgress = () => Math.floor((curSenId / senteces.length) * 100);
 
   return (
-    <div className='w-screen h-screen  flex flex-col items-center justify-center gap-16 p-32'>
+    <div className='w-screen h-screen flex flex-col items-center justify-center gap-16 p-32'>
       <LessonHeader />
-      <div className='flex flex-col items-center gap-16 p-24'>
-        <div className='w-full border-b-2 border-slate-500 p-2'>
-          <div className='flex gap-8'>
-            {picked.map((w: wordObj) => (
-              <button key={w.id} onClick={() => handleTileClick(w)} className='bg-white rounded-lg cursor-pointer px-5 py-3'>
-                {w.word}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className='flex gap-8'>
-          {words.map((w: wordObj) => (
-            <WordTile key={w.id} word={w} isPicked={picked.includes(w)} handleTileClick={handleTileClick} />
+      <CheckResponse />
+      <div className='w-1/2 border-b-2 border-slate-500 p-2'>
+        <div className='flex justify-center gap-8'>
+          {picked.map((w: wordObj) => (
+            <button key={w.id} onClick={() => handleTileClick(w)} className='bg-white rounded-lg cursor-pointer px-5 py-3'>
+              {w.word}
+            </button>
           ))}
         </div>
-        <button
-          onClick={() => checkWordOrder(picked)}
-          className='bg-green-500 text-white rounded-lg px-8 py-2 transition ease-in-out duration-200 hover:bg-green-600'
-        >
-          Check
-        </button>
-        <div>
-          {isValid !== null && isValid && 'Correct'}
-          {isValid !== null && !isValid && 'Try again'}
-          {isCompleted && 'Congratulations!'}
-        </div>
+      </div>
+      <div className='flex gap-8'>
+        {words.map((w: wordObj) => (
+          <WordTile key={w.id} word={w} isPicked={picked.includes(w)} handleTileClick={handleTileClick} />
+        ))}
+      </div>
+      <button
+        onClick={() => checkWordOrder(picked)}
+        className='bg-green-500 text-white rounded-lg px-8 py-2 transition ease-in-out duration-200 hover:bg-green-600'
+      >
+        Check
+      </button>
+      <div>
+        {isValid !== null && isValid && 'Correct'}
+        {isValid !== null && !isValid && 'Try again'}
+        {isCompleted && 'Congratulations!'}
       </div>
     </div>
   );
