@@ -8,6 +8,7 @@ import CheckResponse from './components/CheckResponse';
 export type wordObj = { id: number; word: string };
 
 function App() {
+  //TODO: api: https://github.com/lukePeavey/quotable
   const senteces: string[] = [
     'Duo calls for a lesson',
     'Duo wants to know your location',
@@ -63,32 +64,27 @@ function App() {
     }
   };
 
-  const getProgress = () => Math.floor((curSenId / senteces.length) * 100);
+  const getProgress = (): number => Math.floor((curSenId / senteces.length) * 100);
+
+  const handleLeaveLesson = () => {};
 
   return (
     <div className='w-screen h-screen flex flex-col items-center justify-center gap-16 p-32'>
-      <LessonHeader />
+      <LessonHeader progress={getProgress()} handleLeaveLesson={handleLeaveLesson} />
       <CheckResponse />
       <div className='w-1/2 border-b-2 border-slate-500 p-2'>
         <div className='flex justify-center gap-8'>
           {picked.map((w: wordObj) => (
-            <button key={w.id} onClick={() => handleTileClick(w)} className='bg-white rounded-lg cursor-pointer px-5 py-3'>
-              {w.word}
-            </button>
+            <WordTile word={w} isPicked={false} handleTileClick={handleTileClick} />
           ))}
         </div>
       </div>
-      <div className='flex gap-8'>
+      <div className='flex justify-center gap-8'>
         {words.map((w: wordObj) => (
           <WordTile key={w.id} word={w} isPicked={picked.includes(w)} handleTileClick={handleTileClick} />
         ))}
       </div>
-      <button
-        onClick={() => checkWordOrder(picked)}
-        className='bg-green-500 text-white rounded-lg px-8 py-2 transition ease-in-out duration-200 hover:bg-green-600'
-      >
-        Check
-      </button>
+      <CheckBtn handleCheck={() => checkWordOrder(picked)} />
       <div>
         {isValid !== null && isValid && 'Correct'}
         {isValid !== null && !isValid && 'Try again'}
