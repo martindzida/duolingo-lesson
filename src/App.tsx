@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import WordTile from './components/WordTile';
 import LessonHeader from './components/LessonHeader';
-import RetryLessonBtn from './components/RetryLessonBtn';
 import CheckBtn from './components/CheckBtn';
 import CheckResponse from './components/CheckResponse';
 import useShuffleArray from './utils/useShuffleArray';
@@ -25,11 +24,13 @@ function App() {
   const [words, setWords] = useState<wordObj[]>(useShuffleArray(useParseSentence(senteces[curSenId])));
   const [picked, setPicked] = useState<wordObj[]>([]);
   const [streak, setStreak] = useState(0);
+  const [canContinue, setCanContinue] = useState(false);
 
   useEffect(() => {
     setWords(useShuffleArray(useParseSentence(senteces[curSenId])));
     setIsValid(null);
-  }, [curSenId]);
+    setCanContinue(false);
+  }, [canContinue]);
 
   const checkWordOrder = (words: wordObj[]) => {
     const convStr = words.map((w: wordObj) => w.word).join(' ');
@@ -73,7 +74,7 @@ function App() {
       </div>
       <CheckBtn isDisabled={picked.length === 0} handleCheck={() => checkWordOrder(picked)} />
       <div>{isCompleted && 'Congratulations!'}</div>
-      {isValid !== null && <CheckResponse isCorrect={isValid} correctAnswer={senteces[curSenId]} />}
+      {isValid !== null && <CheckResponse isCorrect={isValid} correctAnswer={senteces[curSenId]} handleContinue={() => setCanContinue(true)} />}
     </div>
   );
 }
