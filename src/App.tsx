@@ -4,11 +4,14 @@ import LessonHeader from './components/LessonHeader';
 import RetryLessonBtn from './components/RetryLessonBtn';
 import CheckBtn from './components/CheckBtn';
 import CheckResponse from './components/CheckResponse';
+import useShuffleArray from './utils/useShuffleArray';
+import useParseSentence from './utils/useParseSente';
+import useGetProgress from './utils/useGetProgress';
 
 export type wordObj = { id: number; word: string };
 
 function App() {
-  //TODO: api: https://github.com/lukePeavey/quotable
+  //TODO: find font on Google Fonts
   const senteces: string[] = [
     'Duo calls for a lesson',
     'Duo wants to know your location',
@@ -19,29 +22,14 @@ function App() {
   const [curSenId, setCurSenId] = useState(0);
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [words, setWords] = useState<wordObj[]>(shuffleArray(parseSentence(senteces[curSenId])));
+  const [words, setWords] = useState<wordObj[]>(useShuffleArray(useParseSentence(senteces[curSenId])));
   const [picked, setPicked] = useState<wordObj[]>([]);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
-    setWords(shuffleArray(parseSentence(senteces[curSenId])));
+    setWords(useShuffleArray(useParseSentence(senteces[curSenId])));
+    setIsValid(null);
   }, [curSenId]);
-
-  /* Randomize array in-place using Durstenfeld shuffle algorithm */
-  function shuffleArray(array: wordObj[]): wordObj[] {
-    for (var i = array.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-    return array;
-  }
-
-  function parseSentence(sen: string): wordObj[] {
-    return sen.split(' ').map((w: string, index) => {
-      return { id: index, word: w };
-    });
-  }
 
   const checkWordOrder = (words: wordObj[]) => {
     const convStr = words.map((w: wordObj) => w.word).join(' ');
@@ -64,22 +52,18 @@ function App() {
     }
   };
 
-  const getProgress = (): number => Math.floor((curSenId / senteces.length) * 100);
-
   const handleLeaveLesson = () => {};
 
   return (
     <div className='w-screen h-screen flex flex-col items-center justify-center gap-16 p-32'>
-      <LessonHeader progress={getProgress()} handleLeaveLesson={handleLeaveLesson} />
-      <CheckResponse />
-      <div className='w-1/2 border-b-2 border-slate-500 p-2'>
-        <div className='flex justify-center gap-8'>
-          {picked.map((w: wordObj) => (
-            <WordTile word={w} isPicked={false} handleTileClick={handleTileClick} />
-          ))}
-        </div>
+      <LessonHeader progress={useGetProgress(curSenId, senteces.length)} handleLeaveLesson={handleLeaveLesson} />
+      {isValid !== null && <CheckResponse />}
+      <div className='w-1/2 h-32 flex justify-center gap-5 items-end border-b-2 border-slate-500 p-2 border-opacity-60'>
+        {picked.map((w: wordObj) => (
+          <WordTile word={w} isPicked={false} handleTileClick={handleTileClick} />
+        ))}
       </div>
-      <div className='flex justify-center gap-8'>
+      <div className='flex justify-center gap-5'>
         {words.map((w: wordObj) => (
           <WordTile key={w.id} word={w} isPicked={picked.includes(w)} handleTileClick={handleTileClick} />
         ))}
@@ -90,6 +74,7 @@ function App() {
         {isValid !== null && !isValid && 'Try again'}
         {isCompleted && 'Congratulations!'}
       </div>
+      <div className='text-orange-500 text-5xl font-extrabold uppercase'>Perfect!</div>
     </div>
   );
 }
