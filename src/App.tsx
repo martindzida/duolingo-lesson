@@ -37,8 +37,12 @@ function App() {
     setIsValid(valid);
     //TODO: think of the end of the lesson
     if (valid) {
-      if (curSenId < senteces.length - 1) setCurSenId(prev => prev + 1);
-      else setIsCompleted(true);
+      if (curSenId < senteces.length - 1) {
+        setCurSenId(prev => prev + 1);
+        setStreak(prev => prev + 1);
+      } else {
+        setIsCompleted(true);
+      }
 
       setPicked([]);
     }
@@ -55,12 +59,11 @@ function App() {
   const handleLeaveLesson = () => {};
 
   return (
-    <div className='w-screen h-screen flex flex-col items-center justify-center gap-16 p-32'>
-      <LessonHeader progress={useGetProgress(curSenId, senteces.length)} handleLeaveLesson={handleLeaveLesson} />
-      {isValid !== null && <CheckResponse />}
+    <div className='w-screen min-h-screen flex flex-col items-center justify-center gap-16'>
+      <LessonHeader progress={useGetProgress(curSenId, senteces.length)} streak={streak} handleLeaveLesson={handleLeaveLesson} />
       <div className='w-1/2 h-32 flex justify-center gap-5 items-end border-b-2 border-slate-500 p-2 border-opacity-60'>
         {picked.map((w: wordObj) => (
-          <WordTile word={w} isPicked={false} handleTileClick={handleTileClick} />
+          <WordTile key={w.id} word={w} isPicked={false} handleTileClick={handleTileClick} />
         ))}
       </div>
       <div className='flex justify-center gap-5'>
@@ -68,13 +71,9 @@ function App() {
           <WordTile key={w.id} word={w} isPicked={picked.includes(w)} handleTileClick={handleTileClick} />
         ))}
       </div>
-      <CheckBtn handleCheck={() => checkWordOrder(picked)} />
-      <div>
-        {isValid !== null && isValid && 'Correct'}
-        {isValid !== null && !isValid && 'Try again'}
-        {isCompleted && 'Congratulations!'}
-      </div>
-      <div className='text-orange-500 text-5xl font-extrabold uppercase'>Perfect!</div>
+      <CheckBtn isDisabled={picked.length === 0} handleCheck={() => checkWordOrder(picked)} />
+      <div>{isCompleted && 'Congratulations!'}</div>
+      {isValid !== null && <CheckResponse isCorrect={isValid} correctAnswer={senteces[curSenId]} />}
     </div>
   );
 }
