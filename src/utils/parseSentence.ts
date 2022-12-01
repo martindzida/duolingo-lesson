@@ -1,6 +1,6 @@
-import { wordObj } from '../App'
+import { WordObj } from '../App'
 
-const parseSentence = (sen: string): wordObj[] => {
+const parseSentence = (sen: string): WordObj[] => {
   return sen.split(' ').map((w: string, index) => {
     return { id: index, word: w }
   })

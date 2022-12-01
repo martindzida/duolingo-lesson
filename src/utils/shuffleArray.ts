@@ -1,7 +1,7 @@
-import { wordObj } from '../App'
+import { WordObj } from '../App'
 
 /* Randomize array in-place using Durstenfeld shuffle algorithm */
-const shuffleArray = (array: wordObj[]): wordObj[] => {
+const shuffleArray = (array: WordObj[]): WordObj[] => {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1))
     let temp = array[i]
