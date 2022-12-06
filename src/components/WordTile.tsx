@@ -1,9 +1,9 @@
-import { wordObj } from '../App';
+import { WordObj } from '../App'
 
 interface Props {
-  word: wordObj;
-  isPicked: boolean;
-  handleTileClick: (w: wordObj) => void;
+  word: WordObj
+  isPicked: boolean
+  handleTileClick: (w: WordObj) => void
 }
 
 const WordTile = ({ word, isPicked, handleTileClick }: Props) => {
@@ -19,7 +19,7 @@ const WordTile = ({ word, isPicked, handleTileClick }: Props) => {
     >
       {word.word}
     </button>
-  );
-};
+  )
+}
 
-export default WordTile;
+export default WordTile
