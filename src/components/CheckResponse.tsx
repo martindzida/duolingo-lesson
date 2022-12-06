@@ -1,15 +1,15 @@
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
-import ContinueBtn from './ContinueBtn';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid'
+import ContinueBtn from './ContinueBtn'
 
 interface Props {
-  isCorrect: boolean;
-  correctAnswer: string;
-  handleContinue: () => void;
+  isCorrect: boolean
+  correctAnswer: string
+  handleContinue: () => void
 }
 
 const CheckResponse = ({ isCorrect, correctAnswer, handleContinue }: Props) => {
   return (
-    <div className={`w-full h-full flex justify-center items-center gap-4 p-8 ${isCorrect ? 'bg-green-100' : 'bg-rose-100'}`}>
+    <div className={`w-full h-40 flex justify-center items-center gap-4 p-8 fixed bottom-0 left-0 ${isCorrect ? 'bg-green-100' : 'bg-rose-100'}`}>
       {isCorrect ? (
         <CheckCircleIcon className='w-24 h-24' style={{ fill: 'white' }} />
       ) : (
@@ -23,7 +23,7 @@ const CheckResponse = ({ isCorrect, correctAnswer, handleContinue }: Props) => {
       </div>
       <ContinueBtn isCorrect={isCorrect} handleContinue={handleContinue} />
     </div>
-  );
-};
+  )
+}
 
-export default CheckResponse;
+export default CheckResponse
