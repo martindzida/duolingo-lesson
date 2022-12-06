@@ -8,7 +8,8 @@ import getWords from './utils/getWords'
 import fetchQuotes from './utils/fetchQuotes'
 import { useQuery } from '@tanstack/react-query'
 import StartPage from './components/StartPage'
-import WordTilesList from './components/WordTilesList'
+import PickedTilesList from './components/PickedTilesList'
+import WordStackList from './components/WordStackList'
 
 export type WordObj = { id: number; word: string }
 
@@ -75,7 +76,8 @@ function App() {
     <div className='w-screen min-h-screen flex flex-col items-center justify-center gap-16'>
       {!isOngoing && <StartPage />}
       <LessonHeader progress={getProgress(correctAnswersCount, senteces.length)} streak={streak} handleLeaveLesson={handleLeaveLesson} />
-      <WordTilesList picked={picked} handleTileClick={handleTileClick} />
+      <PickedTilesList picked={picked} handleTileClick={handleTileClick} />
+      <WordStackList words={words} picked={picked} handleTileClick={handleTileClick} />
       <div className='flex justify-center gap-5'>
         {words.map((w: WordObj) => (
           <WordTile key={w.id} word={w} isPicked={picked.includes(w)} handleTileClick={handleTileClick} />
