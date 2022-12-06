@@ -5,18 +5,16 @@ import CheckBtn from './components/CheckBtn'
 import CheckResponse from './components/CheckResponse'
 import getProgress from './utils/getProgress'
 import getWords from './utils/getWords'
+import fetchQuotes from './utils/fetchQuotes'
 import { useQuery } from '@tanstack/react-query'
+import StartPage from './components/StartPage'
+import WordTilesList from './components/WordTilesList'
 
 export type WordObj = { id: number; word: string }
 
 function App() {
   //TODO: find font on Google Fonts
-  const senteces: string[] = [
-    'Duo calls for a lesson',
-    'Duo wants to know your location',
-    'How many lessons have you done today',
-    'One lesson a day keeps the doctors away',
-  ]
+  const senteces: string[] = ['Duo calls for a lesson', 'Duo wants to know your location']
 
   const [curSenId, setCurSenId] = useState(0)
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
@@ -27,6 +25,7 @@ function App() {
   const [canContinue, setCanContinue] = useState(false)
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0)
   const [wrongAnswers, setWrongAnswers] = useState<WordObj[]>([])
+  const [isOngoing, setIsOngoing] = useState(true)
 
   useEffect(() => {
     setWords(getWords(senteces[curSenId]))
@@ -35,24 +34,22 @@ function App() {
     setPicked([])
   }, [canContinue])
 
-  const fetchQuotes = async () => {
-    const res = await fetch('https://api.quotable.io/quotes')
-    return res.json()
-  }
   const { data, isLoading } = useQuery(['getQuotes'], fetchQuotes)
-
+  console.log(data)
   if (isLoading) {
     return <div>Loading...</div>
   }
 
+  //FIXME: cursed
   const checkWordOrder = (words: WordObj[]) => {
     const convStr = words.map((w: WordObj) => w.word).join(' ')
     const correct = convStr === senteces[curSenId]
-    //TODO: think of the end of the lesson
     if (correct) {
-      setCorrectAnswersCount(prev => prev + 1)
+      setIsCorrect(correct)
+      setStreak(prev => prev + 1)
       if (curSenId < senteces.length - 1) {
-        setStreak(prev => prev + 1)
+        setCorrectAnswersCount(prev => prev + 1)
+        setCurSenId(prev => prev + 1)
       } else {
         setIsCompleted(true)
       }
@@ -60,8 +57,6 @@ function App() {
       setWrongAnswers(getWords(senteces[curSenId]))
       setStreak(0)
     }
-    setIsCorrect(correct)
-    setCurSenId(prev => prev + 1)
   }
 
   const handleTileClick = (tile: WordObj) => {
@@ -72,16 +67,15 @@ function App() {
     }
   }
 
-  const handleLeaveLesson = () => {}
+  const handleLeaveLesson = () => {
+    setIsOngoing(false)
+  }
 
   return (
     <div className='w-screen min-h-screen flex flex-col items-center justify-center gap-16'>
+      {!isOngoing && <StartPage />}
       <LessonHeader progress={getProgress(correctAnswersCount, senteces.length)} streak={streak} handleLeaveLesson={handleLeaveLesson} />
-      <div className='w-1/2 h-32 flex justify-center gap-5 items-end border-b-2 border-slate-500 p-2 border-opacity-60'>
-        {picked.map((w: WordObj) => (
-          <WordTile key={w.id} word={w} isPicked={false} handleTileClick={handleTileClick} />
-        ))}
-      </div>
+      <WordTilesList picked={picked} handleTileClick={handleTileClick} />
       <div className='flex justify-center gap-5'>
         {words.map((w: WordObj) => (
           <WordTile key={w.id} word={w} isPicked={picked.includes(w)} handleTileClick={handleTileClick} />
