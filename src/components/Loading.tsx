@@ -1,5 +1,10 @@
 const Loading = () => {
-  return <div className='text-slate-400 text-lg font-extrabold uppercase'>Loading...</div>;
-};
+  //TODO: some animation
+  return (
+    <div className='w-screen h-screen flex justify-center items-center text-slate-400 text-xl font-extrabold uppercase'>
+      Loading...
+    </div>
+  )
+}
 
-export default Loading;
+export default Loading
