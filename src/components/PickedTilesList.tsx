@@ -1,5 +1,5 @@
 import { WordObj } from '../App'
-import WordTile from '../WordTile'
+import WordTile from '../components/WordTile'
 
 interface Props {
   picked: WordObj[]
