@@ -2,7 +2,7 @@ import { WordObj } from '../App'
 import WordTile from '../components/WordTile'
 
 interface Props {
-  words: WordObj[]
+  words: WordObj[] | undefined
   picked: WordObj[]
   handleTileClick: (tile: WordObj) => void
 }
@@ -10,7 +10,7 @@ interface Props {
 const WordStackList = ({ words, picked, handleTileClick }: Props) => {
   return (
     <div className='flex justify-center gap-5'>
-      {words.map((word: WordObj) => (
+      {words?.map((word: WordObj) => (
         <WordTile
           key={word.id}
           word={word}

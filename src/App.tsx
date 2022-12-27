@@ -12,25 +12,20 @@ import WordStackList from './components/WordStackList'
 import Loading from './components/Loading'
 
 export type WordObj = { id: number; word: string }
-type LessonStageType = 'initial' | 'errors' | 'completed'
+export type LessonStageType = 'start' | 'initial' | 'errors' | 'completed'
 
 function App() {
   //TODO: find font on Google Fonts
-  const senteces: string[] = [
-    'Duo calls for a lesson',
-    'Duo wants to know your location',
-  ]
 
   const [curId, setCurId] = useState(0)
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-  const [lessonStage, setLessonStage] = useState<LessonStageType>('initial')
-  const [words, setWords] = useState<WordObj[]>(getWords(senteces[curId]))
+  const [lessonStage, setLessonStage] = useState<LessonStageType>('start')
+  const [words, setWords] = useState<WordObj[]>()
   const [picked, setPicked] = useState<WordObj[]>([])
   const [streak, setStreak] = useState(0)
   const [canContinue, setCanContinue] = useState(false)
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0)
   const [wrongAnswers, setWrongAnswers] = useState<number[]>([])
-  const [isOngoing, setIsOngoing] = useState(true)
 
   const { data, isLoading } = useQuery(['getQuotes'], fetchQuotes)
 
@@ -38,10 +33,12 @@ function App() {
     return <Loading />
   }
 
-  const quotesWords = data.results.map((quote: any) => getWords(quote.content))
+  const quotes = data.results.map((quote: any) => {
+    return quote.content
+  })
 
   if (canContinue) {
-    setWords(quotesWords[curId])
+    setWords(getWords(quotes[curId]))
     setIsCorrect(null)
     setPicked([])
     //TODO: will be null, probably
@@ -51,13 +48,13 @@ function App() {
   //FIXME: cursed
   const checkWordOrder = (words: WordObj[]) => {
     const convStr = words.map((w: WordObj) => w.word).join(' ')
-    const correct = convStr === senteces[curId]
+    const correct = convStr === quotes[curId]
     setCanContinue(false)
     setIsCorrect(correct)
 
     if (correct) {
       setStreak(prev => prev + 1)
-      if (correctAnswersCount < senteces.length - 1) {
+      if (correctAnswersCount < quotes.length - 1) {
         setCurId(prev => prev + 1)
         setCorrectAnswersCount(prev => prev + 1)
       }
@@ -75,31 +72,41 @@ function App() {
     }
   }
 
+  const handleStart = () => {
+    setWords(getWords(quotes[curId]))
+    setLessonStage('initial')
+  }
+
   return (
     <div className='w-screen min-h-screen flex flex-col items-center justify-center gap-16'>
-      {!isOngoing && <StartPage />}
-      <LessonHeader
-        progress={getProgress(correctAnswersCount, senteces.length)}
-        streak={streak}
-        handleLeaveLesson={() => setIsOngoing(false)}
-      />
-      <PickedTilesList picked={picked} handleTileClick={handleTileClick} />
-      <WordStackList
-        words={words}
-        picked={picked}
-        handleTileClick={handleTileClick}
-      />
-      <CheckBtn
-        isDisabled={!picked.length || isCorrect !== null}
-        handleCheck={() => checkWordOrder(picked)}
-      />
-      <div>{lessonStage === 'completed' && 'Congratulations!'}</div>
-      {isCorrect !== null && (
-        <CheckResponse
-          isCorrect={isCorrect}
-          correctAnswer={senteces[curId]}
-          handleContinue={() => setCanContinue(true)}
-        />
+      {lessonStage === 'start' ? (
+        <StartPage handleStart={handleStart} />
+      ) : (
+        <>
+          <LessonHeader
+            progress={getProgress(correctAnswersCount, quotes.length)}
+            streak={streak}
+            handleLeaveLesson={setLessonStage}
+          />
+          <PickedTilesList picked={picked} handleTileClick={handleTileClick} />
+          <WordStackList
+            words={words}
+            picked={picked}
+            handleTileClick={handleTileClick}
+          />
+          <CheckBtn
+            isDisabled={!picked.length || isCorrect !== null}
+            handleCheck={() => checkWordOrder(picked)}
+          />
+          <div>{lessonStage === 'completed' && 'Congratulations!'}</div>
+          {isCorrect !== null && (
+            <CheckResponse
+              isCorrect={isCorrect}
+              correctAnswer={quotes[curId]}
+              handleContinue={() => setCanContinue(true)}
+            />
+          )}
+        </>
       )}
     </div>
   )
