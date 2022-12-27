@@ -9,6 +9,7 @@ import CheckResponse from './components/CheckResponse'
 import StartPage from './components/StartPage'
 import PickedTilesList from './components/PickedTilesList'
 import WordStackList from './components/WordStackList'
+import Loading from './components/Loading'
 
 export type WordObj = { id: number; word: string }
 type LessonStageType = 'initial' | 'errors' | 'completed'
@@ -34,7 +35,7 @@ function App() {
   const { data, isLoading } = useQuery(['getQuotes'], fetchQuotes)
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <Loading />
   }
 
   const quotesWords = data.results.map((quote: any) => getWords(quote.content))
